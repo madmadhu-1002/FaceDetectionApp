@@ -56,10 +56,30 @@ class App extends React.Component {
     super()
     this.state = {
       input : '',
-      imageUrl: ''
+      imageUrl: '',
+      box: {}
       
     }
   }
+
+  calculateFaceLocation = (data) => {
+    const clarifaiFace = JSON.parse(data).outputs[0].data.regions[0].region_info.bounding_box
+    const image = document.getElementById('inputimage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+    }
+  }
+
+  displayFaceBox = (box) => {
+    
+    this.setState({box: box});
+  }
+
   onInputChange = (event) => {
     this.setState({input: event.target.value})
   }
@@ -90,14 +110,14 @@ class App extends React.Component {
       })
     })
       .then(response => response.text())
-      .then(result => console.log(result))
+      .then(result => this.displayFaceBox(this.calculateFaceLocation(result)))
       .catch(error => console.log('error', error))
     }
     )
     }
    
 
- 
+    //.outputs[0].data.regions[0].region_info.bounding_box
    
   render(){
     const particlesInit = async (main) => {
@@ -122,7 +142,7 @@ class App extends React.Component {
     />
     </div>
     <div>
-    <FaceRecognition imageUrl={this.state.imageUrl}/>
+    <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
     </div>
     </div>
       
