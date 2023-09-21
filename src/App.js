@@ -1,6 +1,7 @@
 import './App.css';
 import React from 'react';
 import Signin from './components/Signin/Signin';
+import Register from './components/Register/Register';
 //import Clarifai from 'clarifai'
 
 import Navigation from './components/Nav/Navigation';
@@ -59,7 +60,9 @@ class App extends React.Component {
     this.state = {
       input : '',
       imageUrl: '',
-      box: {}
+      box: {},
+      route: 'signin',
+      isSignedIn: false
       
     }
   }
@@ -117,11 +120,21 @@ class App extends React.Component {
     }
     )
     }
-   
+  
+  onRouteChange = (route) => {
+    if(route === 'signout') {
+      this.setState({isSignedIn: false});
+    }else if(route === 'home') {
+      this.setState({isSignedIn: true})
+    }
+    this.setState({route: route})
+    
+  }
 
     //.outputs[0].data.regions[0].region_info.bounding_box
    
   render(){
+    
     const particlesInit = async (main) => {
       console.log(main);
   
@@ -130,24 +143,33 @@ class App extends React.Component {
       // starting from v2 you can add only the features you need reducing the bundle size
       await loadFull(main);
     };
+
+  const { imageUrl, route, box, isSignedIn } = this.state;
   return (
     <div className="App">
-      <Signin />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm onInputChange={this.onInputChange} onSubmit={this.onSubmit}/>
-      <div>
       <Particles
-      id="tsparticles"
-      init={particlesInit}
-      options={properti}
-    />
-    </div>
-    <div>
-    <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
-    </div>
-    </div>
+          id="tsparticles"
+          init={particlesInit}
+          options={properti}
+      />
+      <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
+      { route === 'home' 
+      ? <div>
+          <Logo />
+          <Rank />
+          <ImageLinkForm onInputChange={this.onInputChange} onSubmit={this.onSubmit}/>
+
+          <div>
+          <FaceRecognition box={box} imageUrl={imageUrl}/>
+          </div>
+        </div>
+      : ( route === 'signin'
+         ? <Signin onRouteChange={this.onRouteChange}/>
+         : <Register onRouteChange={this.onRouteChange}/>
+        )
+      
+      }
+  </div>
       
   );
 }
