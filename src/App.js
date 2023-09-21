@@ -1,6 +1,7 @@
 import './App.css';
 import React from 'react';
-//import Clarifai from 'clarifai'
+import Clarifai from 'clarifai'
+
 import Navigation from './components/Nav/Navigation';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Logo from './components/Logo/Logo';
@@ -10,9 +11,9 @@ import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import properti from './constants.';
 
-// const app = new Clarifai.App({
-//   apiKey: '3008a44dd4cf43158db4a56dce637db2'
-//  });
+const app = new Clarifai.App({
+  apiKey: '3008a44dd4cf43158db4a56dce637db2'
+ });
 
 
 
@@ -130,6 +131,7 @@ class App extends React.Component {
     };
   return (
     <div className="App">
+      <Signin />
       <Navigation />
       <Logo />
       <Rank />
